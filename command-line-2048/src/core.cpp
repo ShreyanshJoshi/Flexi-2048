@@ -1,60 +1,86 @@
-/* Functions grouped in this file are those that perform the functionalities that user must see while playing the game. Note that all these
-   functionalities are purely optional (except score function maybe), and their absence won't affect the 2048 game in any way.*/
-
-#include "header4.h"
-#include<bits/stdc++.h>
+#include "../header/core.h"
+#include "../header/helper.h"
+#include <bits/stdc++.h>
 using namespace std;
 
-int max_tile(int a[4][4]) {
-	int i,j,ans = -1;
-	for(i=0;i<4;i++)
-		for(j=0;j<4;j++)
-			ans = max(ans,a[i][j]);
-
-	return ans;
+void initialize_game(int a[4][4]) {				
+	assign_random_number(a);
+	assign_random_number(a);
 }
 
-void list_count(int a[4][4]) {
+void display_board(int a[4][4], int points, bool flag) {
 	int i,j;
-	set<int>s;
+	for(i=0;i<4;i++) {
+		for(j=0;j<4;j++) {
+			if(a[i][j]!=-1)  {
+				if(a[i][j]==2 || a[i][j]==4 || a[i][j]==8)
+					cout<<"000"<<a[i][j]<<"     ";
 
-	for(i=0;i<4;i++)
-		for(j=0;j<4;j++)
-			if(a[i][j]!=-1)
-				s.insert(a[i][j]);
+				else if(a[i][j]==16 || a[i][j]==32 || a[i][j]==64)
+					cout<<"00"<<a[i][j]<<"     ";
 
-	cout<<"There are currently "<<s.size()<<" different values in the matrix - ";
-	for(auto it:s)
-		cout<<it<<" ";
+				else if(a[i][j]==128 || a[i][j]==256 || a[i][j]==512)
+					cout<<"0"<<a[i][j]<<"     ";
 
-	cout<<endl;
+				else
+					cout<<a[i][j]<<"     ";
+			}
+
+			else
+				cout<<"****"<<"     ";
+		}
+		if(i==0 && flag)
+			cout<<"POINTS: "<<points;
+
+		cout<<"\n";
+	}
 }
 
-int sum_tiles(int a[4][4]) {
-
-	int i,j,sum=0;
-	for(i=0;i<4;i++)
-		for(j=0;j<4;j++)
-			if(a[i][j]!=-1)
-				sum+=a[i][j];
-
-	return sum;
+bool is_2048(int a[4][4]) {						
+	for(int i=0;i<4;i++) {
+		for(int j=0;j<4;j++)
+			if(a[i][j]==2048)
+				return true;
+	}
+	return false;
 }
 
-int max_possibleval_in1move(int a[4][4]) {
-	int ans = max_tile(a), i,j;
+bool compare(int a[4][4], vector<vector<int>>v) {
+	for(int i=0;i<4;i++) {
+		for(int j=0;j<4;j++)
+			if(a[i][j]!=v[i][j])
+				return false;
+	}
+	return true;
+}
 
-	for(i=0;i<4;i++) {							// left or right moves
-		for(j=0;j<3;j++)
-			if(a[i][j]==a[i][j+1])
-				ans = max(ans,2*a[i][j]);
+bool is_game_over(int a[4][4]) {
+	for (int x = 0; x < 3; x++) {
+		for (int y = 0; y < 3; y++) {
+			if (a[x][y] == a[x][y + 1] || a[x][y] == a[x + 1][y] || a[x][y] == -1)
+				return false;			
+		}
+		if (a[x][3] == a[x + 1][3] || a[x][3] == -1)
+			return false;
+		
+		if (a[3][x] == a[3][x + 1] || a[3][x] == -1)
+			return false;
 	}
-	for(j=0;j<4;j++) {
-		for(i=0;i<3;i++)
-			if(a[i][j]==a[i+1][j])
-				ans = max(ans, 2*a[i][j]);
-	}
-	return ans;
+	return true;
+}
+
+void assign_random_number(int a[4][4]) {
+	int row, col, random = rand();
+	pair<int,int>p = get_loc(a);
+	row = p.first;
+	col = p.second;
+
+	if(random % 2 ==0) 						// 2 is generated
+		a[row][col] = 2;
+	
+	else 								 	// 4 is generated
+		a[row][col] = 4;
+	
 }
 
 int score(int a[4][4], char c) {
@@ -75,7 +101,6 @@ int score(int a[4][4], char c) {
 					i++;
 			}
 			if(flag==false) {
-				// now only 1 sum can be obtained from this column
 				if(a[0][j]==a[2][j] && a[0][j]!=-1 && a[1][j]==-1)
 					val += a[0][j]*2;
 
@@ -101,7 +126,6 @@ int score(int a[4][4], char c) {
 					j++;
 			}
 			if(flag==false) {
-				// now only 1 sum can be obtained from this row
 				if(a[i][0]==a[i][2] && a[i][0]!=-1 && a[i][1]==-1)
 					val += a[i][0]*2;
 
@@ -127,7 +151,6 @@ int score(int a[4][4], char c) {
 					i--;
 			}
 			if(flag==false) {
-				// now only 1 sum can be obtained from this column
 				if(a[3][j]==a[1][j] && a[3][j]!=-1 && a[2][j]==-1)
 					val += a[3][j]*2;
 
@@ -153,7 +176,6 @@ int score(int a[4][4], char c) {
 					j--;
 			}
 			if(flag==false) {
-				// now only 1 sum can be obtained from this row
 				if(a[i][3]==a[i][1] && a[i][3]!=-1 && a[i][2]==-1)
 					val += a[i][3]*2;
 

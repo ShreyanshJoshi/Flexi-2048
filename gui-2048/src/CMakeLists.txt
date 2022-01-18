@@ -1,7 +1,7 @@
 include(${PROJECT_SOURCE_DIR}/cmake/FindSDL2TTF.cmake)
 find_package(SDL2 REQUIRED)
 include_directories(${PROJECT_SOURCE_DIR}/header ${SDL2_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} )
-add_executable(2048 core.cpp game.cpp moves.cpp helper.cpp)
+add_executable(2048 driver.cpp core.cpp gui.cpp moves.cpp helper.cpp)
 target_link_libraries(2048 -lm ${SDL2_LIBRARIES} ${SDL2TTF_LIBRARY} -lSDL2_mixer)    
 FILE(COPY ${CMAKE_SOURCE_DIR}/additional/UbuntuMono-R.ttf DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 FILE(COPY ${CMAKE_SOURCE_DIR}/additional/mix.wav DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

@@ -1,11 +1,7 @@
-/* Across all files in this project, I have tried to minimize the use of global variables as much as possible, for the simple reason that
-   it's a bad practice. Global variables make it very difficult to debug the code by tracking down where the variable was modified */
-
-#include<bits/stdc++.h>
-#include "header1.h"
-#include "header2.h"
-#include "header3.h"
-#include "header4.h"
+#include <bits/stdc++.h>
+#include "../header/helper.h"
+#include "../header/core.h"
+#include "../header/moves.h"
 using namespace std;
 
 int main() {
@@ -14,7 +10,7 @@ int main() {
 	char c,d;
 	string str;
 
-	srand(time(0));		// seed for random number generator - ensures values are generated randomly on each run or program		 
+	srand(time(0));		// seed for random number generator		 
 
 	int a[4][4];	
 
@@ -25,6 +21,7 @@ int main() {
 	initialize_game(a);
 	stack<State>s;						
 
+	cout<<"Welcome to the 2048 game ! ------------\n\n";
 	while(1) {
 
 		/* Before every move, the current state of board is shown to the player, based on which he/she makes the move.
@@ -48,17 +45,14 @@ int main() {
 			s.push(st);
 		}
 
-		// list_count(a);
-		// cout<<"Max tile value currently is "<<max_tile(a)<<"\n";
-		// cout<<"Sum of all tiles currently is "<<sum_tiles(a)<<"\n";
-		// cout<<"Maximum possible tile value attainable in one move is "<<max_possibleval_in1move(a)<<"\n\n";
-
 		undoed = 0;
 		hinted = 0;
 		wc = 0;
 		same = 0;
-
+		
+		cout<<"\nEnter the move: ";
 		cin>>str;
+		
 		if(str.size()>1) {
 			cout<<"Enter only 1 character.\n";
 			wc = 1;
@@ -92,7 +86,7 @@ int main() {
 			continue;
 		}
 		else if(c=='h' && count>=2) {
-			cout<<"U have used all the hints. Try a different character.\n";
+			cout<<"You have used all the hints. Try a different character.\n";
 			hinted = 1;
 			continue;
 		}
@@ -118,16 +112,19 @@ int main() {
 			flag = 1;
 			break;
 		}
+		 
 		if(s.size()>=1 && compare(a, s.top().v)){ 
 			same = 1;
 			continue;
 		}
-
+		
 		// after each move, we need to generate a random number (2 or 4) that has to be placed at some vacant position on the board
-		bool var = assign_random_number(a);
-		if(var==false)
-			break;
+		assign_random_number(a);
 
+		if(is_game_over(a)) {
+			display_board(a,points,true);
+			break;
+		}
 	}
 	if(flag==0)
 		cout<<"GAME OVER!"<<endl;

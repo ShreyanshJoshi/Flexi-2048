@@ -1,9 +1,7 @@
-// All functions here are of the moves, the user is allowed to make, namely, up,down,left,right,undo,hint.
-
-#include "header3.h"
-#include "header2.h"
-#include "header1.h"
-#include<bits/stdc++.h>
+#include "../header/moves.h"
+#include "../header/core.h"
+#include "../header/helper.h"
+#include <bits/stdc++.h>
 using namespace std;
 
 void move_up(int a[4][4]) {		
@@ -43,6 +41,7 @@ void move_up(int a[4][4]) {
 		}
 	}
 }
+
 void move_left(int a[4][4]) {
 	int i,j,k,m;
 	for(i=0;i<4;i++) {									
@@ -80,6 +79,7 @@ void move_left(int a[4][4]) {
 		}
 	}
 }
+
 void move_down(int a[4][4]) {
 	int i,j,k,m;
 	for(j=0;j<4;j++) {									
@@ -116,6 +116,7 @@ void move_down(int a[4][4]) {
 		}
 	}
 }
+
 void move_right(int a[4][4]) {
 	int i,j,k,m;
 	for(i=0;i<4;i++) {									
@@ -152,11 +153,8 @@ void move_right(int a[4][4]) {
 		}
 	}
 }
+
 void hint(int a[4][4]) {
-
-	/* This function, (can be used atmost twice), shows the user the state of the board after each of the possible 4 moves.
-	   This will allow the user to make a more informed choice in his/her attempt to reach 2048 */
-
 	int i,j,b[4][4];
 	restore(b,a);
 
@@ -185,10 +183,6 @@ void hint(int a[4][4]) {
 }
 
 int undo(int a[4][4], stack<State>&s) {
-
-	/* This function, shows the board (and points) before the previous move to the player. This is done, by popping the topmost
-	   elements (which are the current state of board & current points) of stacks s1 and s2 and returning the topmost elements then. */
-
 	vector<vector<int>>v;
 	s.pop();			
 	v = s.top().v;

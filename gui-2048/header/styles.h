@@ -1,7 +1,7 @@
 /**
  * @file styles.h
  * @author Shreyansh Joshi
- * @brief File containing tile colors and related structs.
+ * @brief File containing tile colors and related structs, and some defined constants.
  *
  */
 #pragma once
@@ -58,17 +58,6 @@
  * The font size used while displaying each number inside the cells
  */
 #define CELL_FONT_SIZE 40
-
-//Music Files
-/** @def MIX_MUSIC_PATH
- * The path to the sound that plays when tiles combine or appear.
- */
-#define MIX_MUSIC_PATH "mix.wav"
-
-/** @def BACKGROUND_MUSIC_PATH
- * The path to the background music.
- */
-#define BACKGROUND_MUSIC_PATH "background.mp3"
 
 struct COLOR
 {

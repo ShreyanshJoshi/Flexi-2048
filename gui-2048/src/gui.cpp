@@ -1,22 +1,16 @@
 /**
- * @file game.cpp
+ * @file gui.cpp
  * @author Shreyansh Joshi
  * @brief File containing implementation for the game's gui.
  *
  */
 #include "styles.h"
-#include "game.h"
+#include "gui.h"
 #include "moves.h"
 #include "base.h"
 #include <time.h>
 #include <bits/stdc++.h>
 #include <SDL2/SDL_mixer.h>
-
-/** The pointer to the background music.*/
-Mix_Music *g_background_music;
-
-/** The pointer to the mix music chunk.*/
-Mix_Chunk *g_mix_music;
 
 bool initSDL(SDL_Window **window, SDL_Renderer **renderer) {
 	
@@ -142,7 +136,7 @@ void draw_board(SDL_Renderer *renderer, const int board[SIZE][SIZE], TTF_Font *f
 }
 
 
-void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, stack<State>&s, int &undo) {
+void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, Mix_Chunk *g_mix_music, stack<State>&s, int &undo) {
 	vector<vector<int>>v;
 	load_vector(v,board);
 
@@ -264,7 +258,8 @@ void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, 
 }
 
 
-void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer) {
+void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mix_Chunk *g_mix_music) {
+	display_text(renderer, "2048", TITLE_FONT_SIZE, s);
 	TTF_Font *font = NULL;
 	font = TTF_OpenFont(FONT_PATH, CELL_FONT_SIZE);
 	
@@ -284,7 +279,7 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer) {
 			
 			else if (e.type == SDL_KEYUP) 			{	
 				int undo = 0;
-				handle_move(e, board, renderer, s, undo);
+				handle_move(e, board, renderer, g_mix_music, s, undo);
 				
 				if (is_game_over(board)) {
 					display_text(renderer, "Game Over", 80, s, true);
@@ -334,50 +329,4 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer) {
 		}
 	}
 	TTF_CloseFont(font);
-}
-
-/**
- * @brief The standard main function
- * 
- * Starts the game
- * 
- * @param argc Number of arguments
- * @param argv Arguments
- */
-int main(int argc, char **argv) {
-	//Set up the seed
-	srand(time(NULL));
-
-	//Set up the game board: clear it and initialize it with 2 random numbers.
-	stack<State>s;
-	int board[SIZE][SIZE];
-	clear_board(board);
-	initialize_game(board, s);
-
-	//Init the SDL gui variables
-	SDL_Window *window = NULL;
-	SDL_Renderer *renderer = NULL;
-	if (!initSDL(&window, &renderer))
-		exit(EXIT_FAILURE);
-
-	//Load Music Files
-	g_background_music = Mix_LoadMUS(BACKGROUND_MUSIC_PATH);
-	g_mix_music = Mix_LoadWAV(MIX_MUSIC_PATH);
-
-	if (g_background_music == NULL || g_mix_music == NULL) {
-		fprintf(stderr, "Music files couldn't be loaded.");
-		exit(EXIT_FAILURE);
-	}
-
-	Mix_PlayMusic(g_background_music, -1);
-	display_text(renderer, "2048", TITLE_FONT_SIZE, s);
-
-	game_loop(board, s, renderer);
-
-	//Releases all resources
-	closeSDL(&window);
-	Mix_FreeMusic(g_background_music);
-	Mix_FreeChunk(g_mix_music);
-
-	return EXIT_SUCCESS;
 }

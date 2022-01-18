@@ -1,17 +1,17 @@
 /**
- * @file game.h
+ * @file gui.h
  * @author Shreyansh Joshi
- * @brief File containing function declarations for the game gui.
+ * @brief File containing function declarations for the game GUI.
  *
  */
 #pragma once
 #include "base.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 /**
- * @brief Initializes the SDL window.
- *
+ * @brief Initializes the SDL window. 
  * When two pointers to the pointer of window and renderer are provided,
  * the function initializes both values with the values of created window
  * and renderer. 
@@ -79,6 +79,8 @@ void clear_screen(SDL_Renderer *renderer);
  * @param renderer The renderer for the game
  * @param size The size for the text
  * @param text The text to write
+ * @param s The stack containing states of board and their corresponding points.
+ * @param over Whether the game is over or not (either via loss or win of the player). Default: false.
  */
 void display_text(SDL_Renderer *renderer, const char *text, int size, stack<State>s, bool over=false);
 
@@ -135,6 +137,7 @@ void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font);
  * @param renderer The renderer for the game
  * @param font The font for the tiles
  * @param board The game board.
+ * @param points The current points/score in the game.
  */
 void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points);
 
@@ -143,8 +146,10 @@ void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, 
  * 
  * @param renderer The renderer for the game
  * @param board The game board.
+ * @param s The stack containing states of board and their corresponding points.
+ * @param g_mix_music The pointer to the mix music chunk.
  */
-void game_loop(int board[SIZE][SIZE], SDL_Renderer *renderer);
+void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mix_Chunk *g_mix_music);
 
 /**
  * @brief Handles keyboard presses that correspond with the arrowkeys. 
@@ -156,5 +161,8 @@ void game_loop(int board[SIZE][SIZE], SDL_Renderer *renderer);
  * @param renderer The renderer for the game
  * @param e A Keyup event.
  * @param board The game board.
+ * @param g_mix_music The pointer to the mix music chunk.
+ * @param s The stack containing states of board and their corresponding points.
+ * @param undo Whether the current move is undo move or not.
  */
-void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer);
+void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, Mix_Chunk *g_mix_music, stack<State>&s, int &undo);
