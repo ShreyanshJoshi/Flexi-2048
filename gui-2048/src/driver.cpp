@@ -1,7 +1,7 @@
 /**
  * @file driver.cpp
  * @author Shreyansh Joshi
- * @brief File containing main function, that begins the game and hands over the control to corresponding functions.
+ * @brief File containing main function, that begins the game and hands over the control to the functions that keep the game running.
  *
  */
 #include "gui.h"
@@ -25,16 +25,17 @@ Mix_Chunk *g_mix_music;
  * @param argv Arguments
  */
 int main(int argc, char **argv) {
+
 	//Set up the seed
 	srand(time(NULL));
 
-	//Set up the game board: clear it and initialize it with 2 random numbers.
+	//Set up the game board: clear it and initialize it with 2 random numbers. Also, initializing the stack.
 	stack<State>s;
 	int board[SIZE][SIZE];
 	clear_board(board);
 	initialize_game(board, s);
 
-	//Init the SDL gui variables
+	//Init the SDL GUI variables
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
 	if (!initSDL(&window, &renderer))

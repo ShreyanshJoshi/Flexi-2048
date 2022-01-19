@@ -20,8 +20,8 @@ int main() {
 
 	initialize_game(a);
 	stack<State>s;						
-
 	cout<<"Welcome to the 2048 game ! ------------\n\n";
+	
 	while(1) {
 
 		/* Before every move, the current state of board is shown to the player, based on which he/she makes the move.
@@ -108,11 +108,13 @@ int main() {
 			continue;
 		} 
 
-		if(is_2048(a)) {							// check after each move, if game is over or not.						
+		// check after each move, if user has won or not.
+		if(is_2048(a)) {										
 			flag = 1;
 			break;
 		}
-		 
+		
+		// the board is unchanged after last move, and since it wasn't game over in last iteration, another move must be made to progress the game
 		if(s.size()>=1 && compare(a, s.top().v)){ 
 			same = 1;
 			continue;
@@ -120,12 +122,14 @@ int main() {
 		
 		// after each move, we need to generate a random number (2 or 4) that has to be placed at some vacant position on the board
 		assign_random_number(a);
-
+		
+		// with the assignment of an empty tile a new value, need to check if it's game over or not.
 		if(is_game_over(a)) {
 			display_board(a,points,true);
 			break;
 		}
 	}
+	
 	if(flag==0)
 		cout<<"GAME OVER!"<<endl;
 

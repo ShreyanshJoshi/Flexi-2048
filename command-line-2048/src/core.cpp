@@ -9,9 +9,8 @@ void initialize_game(int a[4][4]) {
 }
 
 void display_board(int a[4][4], int points, bool flag) {
-	int i,j;
-	for(i=0;i<4;i++) {
-		for(j=0;j<4;j++) {
+	for(int i=0;i<4;i++) {
+		for(int j=0;j<4;j++) {
 			if(a[i][j]!=-1)  {
 				if(a[i][j]==2 || a[i][j]==4 || a[i][j]==8)
 					cout<<"000"<<a[i][j]<<"     ";
@@ -55,25 +54,25 @@ bool compare(int a[4][4], vector<vector<int>>v) {
 }
 
 bool is_game_over(int a[4][4]) {
-	for (int x = 0; x < 3; x++) {
-		for (int y = 0; y < 3; y++) {
-			if (a[x][y] == a[x][y + 1] || a[x][y] == a[x + 1][y] || a[x][y] == -1)
+	for (int x=0; x<3; x++) {
+		for (int y=0; y<3; y++) {
+			if (a[x][y] == a[x][y+1] || a[x][y] == a[x+1][y] || a[x][y] == -1)
 				return false;			
 		}
-		if (a[x][3] == a[x + 1][3] || a[x][3] == -1)
+		if (a[x][3] == a[x+1][3] || a[x][3] == -1)
 			return false;
 		
-		if (a[3][x] == a[3][x + 1] || a[3][x] == -1)
+		if (a[3][x] == a[3][x+1] || a[3][x] == -1)
 			return false;
 	}
 	return true;
 }
 
 void assign_random_number(int a[4][4]) {
-	int row, col, random = rand();
+	int random = rand();
 	pair<int,int>p = get_loc(a);
-	row = p.first;
-	col = p.second;
+	int row = p.first;
+	int col = p.second;
 
 	if(random % 2 ==0) 						// 2 is generated
 		a[row][col] = 2;

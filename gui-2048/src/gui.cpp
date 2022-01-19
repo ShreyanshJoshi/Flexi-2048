@@ -1,7 +1,7 @@
 /**
  * @file gui.cpp
  * @author Shreyansh Joshi
- * @brief File containing implementation for the game's gui.
+ * @brief File containing implementation for the game's GUI.
  *
  */
 #include "styles.h"
@@ -9,6 +9,7 @@
 #include "moves.h"
 #include "base.h"
 #include <time.h>
+#include <unistd.h>
 #include <bits/stdc++.h>
 #include <SDL2/SDL_mixer.h>
 
@@ -281,15 +282,11 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mi
 				int undo = 0;
 				handle_move(e, board, renderer, g_mix_music, s, undo);
 				
-				if (is_game_over(board)) {
-					display_text(renderer, "Game Over", 80, s, true);
-					clear_board(board);
-					initialize_game(board, s);
-					render_game(renderer, board, font, 0);
-					continue;
-				}
-
+				// check after each move, if user has won or not.
 				if (is_2048(board)) {
+					assign_random_number(board);
+					render_game(renderer, board, font, s.top().points);
+					usleep(1500000);
 					display_text(renderer, "You won :)", 80, s, true);
 					clear_board(board);
 					initialize_game(board, s);
@@ -297,7 +294,7 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mi
 					continue;
 				}
 
-				if (undo==1) {
+				if (undo==1) {													// undo executed
 					State x = s.top();
 					s.pop();
 					int points = s.top().points;
@@ -312,7 +309,8 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mi
 					continue;
 				}
 
-				if (s.size()>=1 && compare(board, s.top().v)) {	 				// board same as before last move
+				// the board is unchanged after last move, and since it wasn't game over in last iteration, another move must be made to progress the game
+				if (s.size()>=1 && compare(board, s.top().v)) {	 				
 					s.pop();
 					render_game(renderer, board, font, s.top().points);		
 					continue;
@@ -320,6 +318,16 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mi
 
 				assign_random_number(board);
 				render_game(renderer, board, font, s.top().points);
+
+				// with the assignment of an empty tile a new value, need to check if it's game over or not.
+				if (is_game_over(board)) {
+					usleep(1500000);
+					display_text(renderer, "Game Over", 80, s, true);
+					clear_board(board);
+					initialize_game(board, s);
+					render_game(renderer, board, font, 0);
+					continue;
+				}
 			}
 
 			else if (e.type == SDL_MOUSEBUTTONUP) {

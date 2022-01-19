@@ -67,7 +67,7 @@ void move_left(int board[SIZE][SIZE]) {
 				j = k;
 		}
 
-		for(m=1;m<4;m++) {
+		for(m=1;m<4;m++) {								// Filling up empty spaces
 			if(board[i][m]==0)
 				continue;
 
@@ -139,7 +139,7 @@ void move_right(int board[SIZE][SIZE]) {
 			else
 				j = k;
 		}
-		for(m=2;m>=0;m--) {
+		for(m=2;m>=0;m--) {								// Filling up empty spaces
 			if(board[i][m]==0)
 				continue;
 

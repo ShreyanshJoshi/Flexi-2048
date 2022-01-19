@@ -64,7 +64,7 @@ void move_left(int a[4][4]) {
 				j = k;
 		}
 
-		for(m=1;m<4;m++) {
+		for(m=1;m<4;m++) {								// Filling up empty spaces
 			if(a[i][m]==-1)
 				continue;
 
@@ -93,7 +93,7 @@ void move_down(int a[4][4]) {
 			while(k>=1 && a[k][j]==-1)
 				k--;
 
-			if(a[k][j]==a[i][j]) {
+			if(a[k][j]==a[i][j]) {				
 				a[i][j] = 2*a[k][j];
 				a[k][j] = -1;
 				i = k-1;
@@ -138,7 +138,7 @@ void move_right(int a[4][4]) {
 			else
 				j = k;
 		}
-		for(m=2;m>=0;m--) {
+		for(m=2;m>=0;m--) {								// Filling up empty spaces							
 			if(a[i][m]==-1)
 				continue;
 
@@ -155,7 +155,7 @@ void move_right(int a[4][4]) {
 }
 
 void hint(int a[4][4]) {
-	int i,j,b[4][4];
+	int b[4][4];
 	restore(b,a);
 
 	cout<<"If move == up:\n";

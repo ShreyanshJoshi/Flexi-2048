@@ -59,8 +59,7 @@
  */
 #define CELL_FONT_SIZE 40
 
-struct COLOR
-{
+struct COLOR {
     unsigned char r;
     unsigned char g;
     unsigned char b;
@@ -70,8 +69,7 @@ struct COLOR
 /** The background color used by the application  */
 struct COLOR g_bg = {211, 204, 201, 255};
 
-/** The text color used by the ui elemets (dark only). draw_text_white()
- *  is used to draw white text.
+/** The text color used by the UI elemets (dark only). draw_text_white() is used to draw white text.
  */
 struct COLOR g_fg = {80, 80, 80, 255};
 
@@ -102,4 +100,5 @@ struct COLOR g_COLORS[] = {
     {0, 153, 255, 255},
     {51, 153, 255, 255},
     {153, 204, 255, 255},
-    {102, 255, 102, 255}};
+    {102, 255, 102, 255}
+};
