@@ -130,10 +130,10 @@ void assign_random_number(int board[SIZE][SIZE]) {
 	row = p.first;
 	col = p.second;
 
-	if(random % 2 ==0) 						// 2 is generated
+	if(random % 2 ==0) 						
 		board[row][col] = 2;
 	
-	else 								 	// 4 is generated
+	else 								 	
 		board[row][col] = 4;
 	
 }

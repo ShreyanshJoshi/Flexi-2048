@@ -13,6 +13,12 @@
 #include <bits/stdc++.h>
 #include <SDL2/SDL_mixer.h>
 
+/** The pointer to the background music.*/
+Mix_Music *g_background_music;
+
+/** The pointer to the mix music chunk.*/
+Mix_Chunk *g_mix_music;
+
 bool initSDL(SDL_Window **window, SDL_Renderer **renderer) {
 	
 	TTF_Init();
@@ -49,7 +55,6 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Rec
 	TTF_SizeText(font, text, &message_rect.w, &message_rect.h);
 	message_rect.x = rect.x + rect.w / 2 - message_rect.w / 2;
 	message_rect.y = rect.y + rect.h / 2 - message_rect.h / 2;
-
 	SDL_RenderCopy(renderer, Message, NULL, &message_rect);
 	SDL_DestroyTexture(Message);
 	SDL_FreeSurface(surfaceMessage);
@@ -61,6 +66,10 @@ void draw_white_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, S
 	draw_text(renderer, font, text, rect, White);
 }
 
+void draw_grey_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Rect rect) {
+	SDL_Color Grey = {127, 94, 47};
+	draw_text(renderer, font, text, rect, Grey);
+}
 
 void closeSDL(SDL_Window **window) {
 	SDL_DestroyWindow(*window);
@@ -131,13 +140,17 @@ void draw_board(SDL_Renderer *renderer, const int board[SIZE][SIZE], TTF_Font *f
 				str[1] = '\0';
 			}
 
-			draw_white_text(renderer, font, str, fillRect);
+			if (board[y][x]==2 || board[y][x]==4)
+				draw_grey_text(renderer, font, str, fillRect);
+			
+			else
+				draw_white_text(renderer, font, str, fillRect);
 		}
 	}
 }
 
 
-void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, Mix_Chunk *g_mix_music, stack<State>&s, int &undo) {
+void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, stack<State>&s, int &undo, bool &invalid) {
 	vector<vector<int>>v;
 	load_vector(v,board);
 
@@ -201,140 +214,211 @@ void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, Mix
 
 			return;
 
-		default:;
+		default:
+			invalid = true; 
+			return;
 	}
 	s.push(st);
 }
 
 
-void draw_button(SDL_Renderer *renderer, TTF_Font *font) {
+void draw_button(SDL_Renderer *renderer, TTF_Font *font, bool game_over) {
 	char txt[] = "New Game";
-	SDL_Rect fillRect = {SCREEN_PAD / 2,
+	SDL_Rect fillRect = {2 * SCREEN_PAD,
 						 SCREEN_WIDTH + SCREEN_PAD,
-						 SCREEN_WIDTH / 2 - 2 * SCREEN_PAD,
-						 (SCREEN_HEIGHT - SCREEN_WIDTH) - 2 * SCREEN_PAD};
+						 SCREEN_WIDTH / 2 - 11 * SCREEN_PAD,
+						 SCREEN_HEIGHT - SCREEN_WIDTH - 2 * SCREEN_PAD};
+	
+	if (game_over) 
+		fillRect = {120, 500, SCREEN_WIDTH / 2 - 2 * SCREEN_PAD, (SCREEN_HEIGHT - SCREEN_WIDTH) - 2 * SCREEN_PAD};
+	
 	SDL_SetRenderDrawColor(renderer, g_button_bg.r, g_button_bg.g, g_button_bg.b, g_button_bg.a);
 	SDL_RenderFillRect(renderer, &fillRect);
 	draw_white_text(renderer, font, txt, fillRect);
 }
 
 
-void button_handler(SDL_Event e, int board[SIZE][SIZE], stack<State>&s) {
-	SDL_Rect draw_rect = {SCREEN_PAD / 2,
-						  SCREEN_WIDTH + SCREEN_PAD,
-						  SCREEN_WIDTH / 2 - 2 * SCREEN_PAD,
-						  SCREEN_HEIGHT - SCREEN_WIDTH - 2 * SCREEN_PAD};
+void button_handler(SDL_Event e, int board[SIZE][SIZE], stack<State>&s, vector<string>bg_music, bool game_over, bool &new_game) {
+	SDL_Rect draw_rect = {2 * SCREEN_PAD,
+						 SCREEN_WIDTH + SCREEN_PAD,
+						 SCREEN_WIDTH / 2 - 11 * SCREEN_PAD,
+						 SCREEN_HEIGHT - SCREEN_WIDTH - 2 * SCREEN_PAD};
 
+	if (game_over) 
+		draw_rect = {120, 500, SCREEN_WIDTH / 2 - 2 * SCREEN_PAD, (SCREEN_HEIGHT - SCREEN_WIDTH) - 2 * SCREEN_PAD};
+	
 	if (e.button.button == SDL_BUTTON_LEFT && e.button.x >= draw_rect.x && e.button.x <= (draw_rect.x + draw_rect.w) &&
 		e.button.y >= draw_rect.y && e.button.y <= (draw_rect.y + draw_rect.h)) {
 		clear_board(board);
 		initialize_game(board, s);
+		new_game = true;
+		int randNum = rand()%(bg_music.size());
+		g_background_music = Mix_LoadMUS(bg_music[randNum].c_str());
+
+		Mix_PlayMusic(g_background_music, -1);
 	}
 }
 
 
-void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points) {
+void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points, int best_score) {
 	char score[15]; 
 	sprintf(score, "%d", points);
-
 	char scoreText[30] = "Score:";
 	strncat(scoreText, score, 15);
-	SDL_Rect fillRect = {SCREEN_WIDTH / 2 + 5,
+	SDL_Rect fillRect = {SCREEN_WIDTH / 2 - 11 * SCREEN_PAD + 4 * SCREEN_PAD,
 						 SCREEN_WIDTH + SCREEN_PAD,
-						 SCREEN_WIDTH / 2 - 2 * SCREEN_PAD,
+						 SCREEN_WIDTH / 2 - 11 * SCREEN_PAD,
 						 SCREEN_HEIGHT - SCREEN_WIDTH - 2 * SCREEN_PAD};
 
 	SDL_SetRenderDrawColor(renderer, g_score_bg.r, g_score_bg.g, g_score_bg.b, g_score_bg.a);
 	SDL_RenderFillRect(renderer, &fillRect);
 	draw_white_text(renderer, font, scoreText, fillRect);
+
+	char b_score[15]; 
+	sprintf(b_score, "%d", best_score);
+	char b_scoreText[30] = "Best:";
+	strncat(b_scoreText, b_score, 15);
+	fillRect = {SCREEN_WIDTH / 2 - 11 * SCREEN_PAD + 4 * SCREEN_PAD + SCREEN_WIDTH / 2 - 11 * SCREEN_PAD + 2 * SCREEN_PAD,
+						 SCREEN_WIDTH + SCREEN_PAD,
+						 SCREEN_WIDTH / 2 - 11 * SCREEN_PAD,
+						 SCREEN_HEIGHT - SCREEN_WIDTH - 2 * SCREEN_PAD};
+
+	SDL_SetRenderDrawColor(renderer, g_score_bg.r, g_score_bg.g, g_score_bg.b, g_score_bg.a);
+	SDL_RenderFillRect(renderer, &fillRect);
+	draw_white_text(renderer, font, b_scoreText, fillRect);
 }
 
 
-void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points) {
+void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font_tile, TTF_Font *font_text, int points, int best_score) {
 	clear_screen(renderer);
-	draw_board(renderer, board, font);
-	draw_score(renderer, board, font, points);
-	draw_button(renderer, font);
+	draw_board(renderer, board, font_tile);
+	draw_score(renderer, board, font_text, points, best_score);
+	draw_button(renderer, font_text);
 	SDL_RenderPresent(renderer);
 }
 
 
-void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mix_Chunk *g_mix_music) {
-	display_text(renderer, "2048", TITLE_FONT_SIZE, s);
-	TTF_Font *font = NULL;
-	font = TTF_OpenFont(FONT_PATH, CELL_FONT_SIZE);
+void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, vector<string> bg_music) {
 	
-	if (font == NULL) {
+	// Load Music Files
+	int randNum = rand()%(bg_music.size());								// which song to play from the list
+	g_background_music = Mix_LoadMUS(bg_music[randNum].c_str());        // The path to the background music.
+	g_mix_music = Mix_LoadWAV("mix.wav");                           	// The path to the sound that plays when tiles combine or appear.
+
+	Mix_PlayMusic(g_background_music, -1);
+
+	display_text(renderer, "2048", TITLE_FONT_SIZE, s);
+	TTF_Font *font_tile = NULL, *font_text = NULL;
+	font_tile = TTF_OpenFont(FONT_PATH, CELL_FONT_SIZE);
+	font_text = TTF_OpenFont(FONT_PATH, 25);
+	
+	if (font_tile == NULL || font_text == NULL) {
 		fprintf(stderr, "The required font was not found. TTF_OpenFont: %s\n", TTF_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	render_game(renderer, board, font, 0);
-	bool quit = false;
+	int best_score = 0;
+	render_game(renderer, board, font_tile, font_text, 0, best_score);
+	bool quit = false, game_over=false;
 	SDL_Event e;
 
 	while (!quit) {
 		while (SDL_PollEvent(&e) != 0) {
+			if (game_over) {
+				if (e.type == SDL_MOUSEBUTTONUP) {
+					bool new_game = false;
+					button_handler(e, board, s, bg_music, game_over, new_game);
+					if (new_game) {
+						render_game(renderer, board, font_tile, font_text, 0, best_score);
+						game_over = false;
+						continue;
+					}
+					else
+						continue;
+				}
+				else if (e.type == SDL_QUIT) {
+					quit = true;
+					break;
+				}
+				else
+					continue;
+			}
 			if (e.type == SDL_QUIT) 
 				quit = true;
 			
-			else if (e.type == SDL_KEYUP) 			{	
+			else if (e.type == SDL_KEYUP) {	
 				int undo = 0;
-				handle_move(e, board, renderer, g_mix_music, s, undo);
-				
+				bool invalid = false;
+
+				handle_move(e, board, renderer, s, undo, invalid);
+				best_score = max(best_score, s.top().points);
+
 				// check after each move, if user has won or not.
 				if (is_2048(board)) {
+					game_over = true;
 					assign_random_number(board);
-					render_game(renderer, board, font, s.top().points);
+					render_game(renderer, board, font_tile, font_text, s.top().points, best_score);
 					usleep(1500000);
-					display_text(renderer, "You won :)", 80, s, true);
-					clear_board(board);
-					initialize_game(board, s);
-					render_game(renderer, board, font, 0);
+					display_text(renderer, "You win :)", 80, s, true);
+					draw_button(renderer, TTF_OpenFont(FONT_PATH, 35), game_over);
+					SDL_RenderPresent(renderer);
 					continue;
 				}
 
-				if (undo==1) {													// undo executed
+				if (undo==1) {										// undo executed
 					State x = s.top();
 					s.pop();
 					int points = s.top().points;
 					s.push(x);
-					render_game(renderer, board, font, points);
+					render_game(renderer, board, font_tile, font_text, points, best_score);
 					s.pop();		
 					continue;
 				}
 
-				else if (undo==2) {												// couldn't undo due to empty stack
-					render_game(renderer, board, font, s.top().points);
+				else if (undo==2) {									// couldn't undo due to empty stack
+					render_game(renderer, board, font_tile, font_text, s.top().points, best_score);
 					continue;
 				}
 
-				// the board is unchanged after last move, and since it wasn't game over in last iteration, another move must be made to progress the game
+				// the board is unchanged after last move, and since it wasn't game over in last iteration, another move must be made 
+				// to progress the game
 				if (s.size()>=1 && compare(board, s.top().v)) {	 				
 					s.pop();
-					render_game(renderer, board, font, s.top().points);		
+					render_game(renderer, board, font_tile, font_text, s.top().points, best_score);		
+					continue;
+				}
+
+				// an invalid move was made
+				if (invalid) {
+					render_game(renderer, board, font_tile, font_text, s.top().points, best_score);	
 					continue;
 				}
 
 				assign_random_number(board);
-				render_game(renderer, board, font, s.top().points);
+				render_game(renderer, board, font_tile, font_text, s.top().points, best_score);
 
 				// with the assignment of an empty tile a new value, need to check if it's game over or not.
 				if (is_game_over(board)) {
+					game_over = true;
 					usleep(1500000);
 					display_text(renderer, "Game Over", 80, s, true);
-					clear_board(board);
-					initialize_game(board, s);
-					render_game(renderer, board, font, 0);
+					draw_button(renderer, TTF_OpenFont(FONT_PATH, 35), game_over);
+					SDL_RenderPresent(renderer);
 					continue;
 				}
 			}
 
 			else if (e.type == SDL_MOUSEBUTTONUP) {
-				button_handler(e, board, s);
-				render_game(renderer, board, font, 0);
+				bool new_game = false;
+				button_handler(e, board, s, bg_music, game_over, new_game);
+
+				if (new_game)
+					render_game(renderer, board, font_tile, font_text, 0, best_score);
 			}
 		}
 	}
-	TTF_CloseFont(font);
+	Mix_FreeMusic(g_background_music);
+	Mix_FreeChunk(g_mix_music);
+	TTF_CloseFont(font_text);
+	TTF_CloseFont(font_tile);
 }

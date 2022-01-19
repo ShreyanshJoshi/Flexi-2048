@@ -54,15 +54,22 @@ void draw_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Rec
 
 /**
  * @brief Draws white text centered inside a rect. 
- *
- * Same as draw_text(..., SDL_Color White)
- * 
  * @param renderer The renderer for the game
  * @param font The font for the text
  * @param text The text to write
  * @param rect The SDL_Rect object inside which text is written
  */
 void draw_white_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Rect rect);
+
+
+/**
+ * @brief Draws grey text centered inside a rect. Used when values in a tile are either 2 or 4. 
+ * @param renderer The renderer for the game
+ * @param font The font for the text
+ * @param text The text to write
+ * @param rect The SDL_Rect object inside which text is written
+ */
+void draw_grey_text(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Rect rect);
 
 /**
  * @brief Clears the window screen.
@@ -103,7 +110,7 @@ void draw_board(SDL_Renderer *renderer, const int board[SIZE][SIZE], TTF_Font *f
  * @param renderer The renderer for the game
  * @param font The font for the button
  */
-void draw_button(SDL_Renderer *renderer, TTF_Font *font);
+void draw_button(SDL_Renderer *renderer, TTF_Font *font, bool game_over=false);
 
 /**
  * @brief Handles the action of New Game button. 
@@ -115,7 +122,7 @@ void draw_button(SDL_Renderer *renderer, TTF_Font *font);
  * @param e The mouse event
  * @param board The game board.
  */
-void button_handler(SDL_Event e, int board[SIZE][SIZE]);
+void button_handler(SDL_Event e, int board[SIZE][SIZE], vector<string>bg_music, bool game_over, bool &new_game);
 
 /**
  * @brief Draws the current game score
@@ -126,7 +133,7 @@ void button_handler(SDL_Event e, int board[SIZE][SIZE]);
  * @param font The font for the tiles
  * @param board The game board.
  */
-void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font);
+void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points, int best_score);
 
 /**
  * @brief Draws everything for the game and renders it to screen. 
@@ -139,7 +146,7 @@ void draw_score(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font);
  * @param board The game board.
  * @param points The current points/score in the game.
  */
-void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, int points);
+void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font_tile, TTF_Font *font_text, int points);
 
 /**
  * @brief This is the main game loop that handles all events and drawing 
@@ -149,7 +156,7 @@ void render_game(SDL_Renderer *renderer, int board[SIZE][SIZE], TTF_Font *font, 
  * @param s The stack containing states of board and their corresponding points.
  * @param g_mix_music The pointer to the mix music chunk.
  */
-void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mix_Chunk *g_mix_music);
+void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, vector<string>bg_music);
 
 /**
  * @brief Handles keyboard presses that correspond with the arrowkeys. 
@@ -165,4 +172,4 @@ void game_loop(int board[SIZE][SIZE], stack<State>&s, SDL_Renderer *renderer, Mi
  * @param s The stack containing states of board and their corresponding points.
  * @param undo Whether the current move is undo move or not.
  */
-void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, Mix_Chunk *g_mix_music, stack<State>&s, int &undo);
+void handle_move(SDL_Event e, int board[SIZE][SIZE], SDL_Renderer *renderer, stack<State>&s, int &undo);

@@ -74,10 +74,10 @@ void assign_random_number(int a[4][4]) {
 	int row = p.first;
 	int col = p.second;
 
-	if(random % 2 ==0) 						// 2 is generated
+	if(random % 2 ==0) 						
 		a[row][col] = 2;
 	
-	else 								 	// 4 is generated
+	else 								 	
 		a[row][col] = 4;
 	
 }
