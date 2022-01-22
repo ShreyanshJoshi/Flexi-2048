@@ -25,12 +25,12 @@
 /** @def SCREEN_WIDTH
  * The width of the window
  */
-#define SCREEN_WIDTH 500
+#define SCREEN_WIDTH 600
 
 /** @def SCREEN_HEIGHT
  * The height of the window
  */
-#define SCREEN_HEIGHT 600
+#define SCREEN_HEIGHT 900
 
 /** @def SCREEN_PAD
  * The padding to use while drawing elements to window
@@ -47,12 +47,12 @@
 /** @def TITLE_FONT_SIZE
  * The font size used while displaying "2048" at the start of game.
  */
-#define TITLE_FONT_SIZE 200
+#define TITLE_FONT_SIZE 180
 
 /** @def GOVER_FONT_SIZE
  * The font size used while displaying "Game Over" at the end of game.
  */
-#define GOVER_FONT_SIZE 100
+#define GOVER_FONT_SIZE 60
 
 /** @def CELL_FONT_SIZE
  * The font size used while displaying each number inside the cells
@@ -69,7 +69,8 @@ struct COLOR {
 /** The background color used by the application  */
 struct COLOR g_bg = {211, 204, 201, 255};
 
-/** The text color used by the UI elemets (dark only). draw_text_white() is used to draw white text.
+/** The text color used by the UI elemets (dark only). draw_white_text() is used to draw white text, and draw_grey_text
+ * is used to draw grey text.
  */
 struct COLOR g_fg = {80, 80, 80, 255};
 
@@ -89,13 +90,13 @@ struct COLOR g_COLORS[] = {
     {243, 227, 205, 255},           // 4
     {233, 178, 132, 255},           // 8
     {231, 159, 97, 255},            // 16
-    {208, 110, 69, 255},            // 32
+    {214, 145, 115, 255},            // 32
     {215, 106, 12, 255},            // 64   
-    {228, 219, 84, 255},            // 128
+    {237, 211, 127, 255},            // 128
     {237, 204, 97, 255},            // 256
     {237, 200, 60, 255},            // 512
-    {237, 197, 38, 255},            // 1024
-    {237, 194, 0, 255},             // 2048
+    {237, 197, 26, 255},            // 1024
+    {237, 203, 0, 255},             // 2048
     {202, 135, 135, 255},           // 4096
     {205, 109, 109, 255},           // 8192
     {206, 82, 82, 255},             // 16384

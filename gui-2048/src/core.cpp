@@ -10,22 +10,22 @@
 
 using namespace std;
 
-void clear_board(int board[SIZE][SIZE]) {
-	for (int x = 0; x < SIZE; x++) 
-		for (int y = 0; y < SIZE; y++) 
-			board[x][y] = 0;
+void clear_board(int board[Y_DIM][X_DIM]) {
+	for (int i=0; i<Y_DIM; i++) 
+		for (int j=0; j<X_DIM; j++) 
+			board[i][j] = 0;
 		
 }
 
-int calculate_score(int board[SIZE][SIZE], char c) {
-	int i,j,val = 0;
+int calculate_score(int board[Y_DIM][X_DIM], char c) {
+	int i,j,k,m,val = 0;
 	bool flag;
 
 	if(c=='w') {								// up
-		for(j=0;j<4;j++) {
+		for(j=0;j<X_DIM;j++) {
 			i = 1;
 			flag = false;
-			while(i<4) {
+			while(i<Y_DIM) {
 				if(board[i][j]==board[i-1][j] && board[i][j]!=0) {
 					val += board[i][j]*2;
 					flag = true;
@@ -35,22 +35,28 @@ int calculate_score(int board[SIZE][SIZE], char c) {
 					i++;
 			}
 			if(flag==false) {
-				if(board[0][j]==board[2][j] && board[0][j]!=0 && board[1][j]==0)
-					val += board[0][j]*2;
+				for(k=0;k<Y_DIM-2;k++) {
+					for(m=k+2;m<Y_DIM;m++) {
+						if(board[k][j]==board[m][j] && board[k][j]!=0) {
+							// checking if all elements between these 2 are 0s or not.
+							bool temp = false;
+							for(int l=k+1;l<m;l++)
+								if(board[l][j]!=0)
+									temp = true;
 
-				else if(board[1][j]==board[3][j] && board[1][j]!=0 && board[2][j]==0)
-					val += board[1][j]*2;
-
-				else if(board[0][j]==board[3][j] && board[0][j]!=0 && board[1][j]==0 && board[2][j]==0)
-					val += board[0][j]*2;
+							if(temp==false)
+								val += board[k][j]*2;
+						}
+					}
+				}
 			}
 		}
 	}
 	else if(c=='a') {							// left
-		for(i=0;i<4;i++) {
+		for(i=0;i<Y_DIM;i++) {
 			j = 1;
 			flag = false;
-			while(j<4) {
+			while(j<X_DIM) {
 				if(board[i][j]==board[i][j-1] && board[i][j]!=0) {
 					val += board[i][j]*2;
 					flag = true;
@@ -60,20 +66,26 @@ int calculate_score(int board[SIZE][SIZE], char c) {
 					j++;
 			}
 			if(flag==false) {
-				if(board[i][0]==board[i][2] && board[i][0]!=0 && board[i][1]==0)
-					val += board[i][0]*2;
+				for(k=0;k<X_DIM-2;k++) {
+					for(m=k+2;m<X_DIM;m++) {
+						if(board[i][k]==board[i][m] && board[i][k]!=0) {
+							// checking if all elements between these 2 are 0s or not.
+							bool temp = false;
+							for(int l=k+1;l<m;l++)
+								if(board[i][l]!=0)
+									temp = true;
 
-				else if(board[i][1]==board[i][3] && board[i][1]!=0 && board[i][2]==0)
-					val += board[i][1]*2;
-
-				else if(board[i][0]==board[i][3] && board[i][0]!=0 && board[i][1]==0 && board[i][2]==0)
-					val += board[i][0]*2;
+							if(temp==false)
+								val += board[i][k]*2;
+						}
+					}
+				}
 			}
 		}
 	}
 	else if(c=='s') {							// down
-		for(j=0;j<4;j++) {
-			i = 2;
+		for(j=0;j<X_DIM;j++) {
+			i = Y_DIM-2;
 			flag = false;
 			while(i>=0) {
 				if(board[i][j]==board[i+1][j] && board[i][j]!=0) {
@@ -85,20 +97,26 @@ int calculate_score(int board[SIZE][SIZE], char c) {
 					i--;
 			}
 			if(flag==false) {
-				if(board[3][j]==board[1][j] && board[3][j]!=0 && board[2][j]==0)
-					val += board[3][j]*2;
+				for(k=Y_DIM-1;k>=2;k--) {
+					for(m=k-2;m>=0;m--) {
+						if(board[k][j]==board[m][j] && board[k][j]!=0) {
+							// checking if all elements between these 2 are 0s or not.
+							bool temp = false;
+							for(int l=k-1;l>m;l--)
+								if(board[l][j]!=0)
+									temp = true;
 
-				else if(board[2][j]==board[0][j]  && board[2][j]!=0 && board[1][j]==0)
-					val += board[2][j]*2;
-
-				else if(board[3][j]==board[0][j] && board[3][j]!=0 && board[2][j]==0 && board[1][j]==0)
-					val += board[3][j]*2;
+							if(temp==false)
+								val += board[k][j]*2;
+						}
+					}
+				}
 			}
 		}
 	}
 	else {										// right
-		for(i=0;i<4;i++) {
-			j = 2;
+		for(i=0;i<Y_DIM;i++) {
+			j = X_DIM-2;
 			flag = false;
 			while(j>=0) {
 				if(board[i][j]==board[i][j+1] && board[i][j]!=0) {
@@ -110,21 +128,27 @@ int calculate_score(int board[SIZE][SIZE], char c) {
 					j--;
 			}
 			if(flag==false) {
-				if(board[i][3]==board[i][1] && board[i][3]!=0 && board[i][2]==0)
-					val += board[i][3]*2;
+				for(k=X_DIM-1;k>=2;k--) {
+					for(m=k-2;m>=0;m--) {
+						if(board[i][k]==board[i][m] && board[i][k]!=0) {
+							// checking if all elements between these 2 are 0s or not.
+							bool temp = false;
+							for(int l=k-1;l>m;l--)
+								if(board[i][l]!=0)
+									temp = true;
 
-				else if(board[i][2]==board[i][0] && board[i][2]!=0 && board[i][1]==0)
-					val += board[i][2]*2;
-
-				else if(board[i][3]==board[i][0] && board[i][3]!=0 && board[i][2]==0 && board[i][1]==0)
-					val += board[i][3]*2;
+							if(temp==false)
+								val += board[i][k]*2;
+						}
+					}
+				}
 			}
 		}
 	}
 	return val;	
 }
 
-void assign_random_number(int board[SIZE][SIZE]) {
+void assign_random_number(int board[Y_DIM][X_DIM]) {
 	int row, col, random = rand();
 	pair<int,int>p = get_loc(board);
 	row = p.first;
@@ -138,23 +162,22 @@ void assign_random_number(int board[SIZE][SIZE]) {
 	
 }
 
-bool is_game_over(int board[SIZE][SIZE]) {
-	for (int x = 0; x < SIZE - 1; x++) {
-		for (int y = 0; y < SIZE - 1; y++) {
-			if (board[x][y] == board[x][y + 1] || board[x][y] == board[x + 1][y] || board[x][y] == 0)
+bool is_game_over(int board[Y_DIM][X_DIM]) {
+	for (int i=0; i<Y_DIM-1; i++) {
+		for (int j=0; j<X_DIM-1; j++) 
+			if (board[i][j]==board[i][j+1] || board[i][j]==board[i+1][j] || board[i][j]==0)
 				return false;
-			
-		}
-		if (board[x][SIZE - 1] == board[x + 1][SIZE - 1] || board[x][SIZE - 1] == 0)
+
+		if (board[i][X_DIM-1]==board[i+1][X_DIM-1] || board[i][X_DIM-1]==0)
 			return false;
 		
-		if (board[SIZE - 1][x] == board[SIZE - 1][x + 1] || board[SIZE - 1][x] == 0)
+		if (board[Y_DIM-1][i]==board[Y_DIM-1][i+1] || board[Y_DIM-1][i]==0)
 			return false;
 	}
 	return true;
 }
 
-void initialize_game(int board[SIZE][SIZE], stack<State>&s) {				
+void initialize_game(int board[Y_DIM][X_DIM], stack<State>&s) {				
 	while(s.empty()==false) 
 		s.pop();
 	
@@ -162,18 +185,18 @@ void initialize_game(int board[SIZE][SIZE], stack<State>&s) {
 	assign_random_number(board);
 }
 
-bool compare(int board[SIZE][SIZE], vector<vector<int>>v) {
-	for(int i=0;i<4;i++) {
-		for(int j=0;j<4;j++)
+bool compare(int board[Y_DIM][X_DIM], vector<vector<int>>v) {
+	for(int i=0;i<Y_DIM;i++) {
+		for(int j=0;j<X_DIM;j++)
 			if(board[i][j]!=v[i][j])
 				return false;
 	}
 	return true;
 }
 
-bool is_2048(int board[SIZE][SIZE]) {					
-	for(int i=0;i<4;i++) {
-		for(int j=0;j<4;j++)
+bool is_2048(int board[Y_DIM][X_DIM]) {					
+	for(int i=0;i<Y_DIM;i++) {
+		for(int j=0;j<X_DIM;j++)
 			if(board[i][j]==2048)
 				return true;
 	}

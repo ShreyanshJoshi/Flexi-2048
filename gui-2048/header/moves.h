@@ -9,16 +9,16 @@
 
 /** @brief Moves tiles in up direction, merging according to the rules whenever possible.
  */
-void move_up(int board[SIZE][SIZE]);
+void move_up(int board[Y_DIM][X_DIM]);
 
 /** @brief Moves tiles in left direction, merging according to the rules whenever possible.
  */
-void move_left(int board[SIZE][SIZE]);
+void move_left(int board[Y_DIM][X_DIM]);
 
 /** @brief Moves tiles in down direction, merging according to the rules whenever possible.
  */
-void move_down(int board[SIZE][SIZE]);
+void move_down(int board[Y_DIM][X_DIM]);
 
 /** @brief Moves tiles in right direction, merging according to the rules whenever possible.
  */
-void move_right(int board[SIZE][SIZE]);
+void move_right(int board[Y_DIM][X_DIM]);

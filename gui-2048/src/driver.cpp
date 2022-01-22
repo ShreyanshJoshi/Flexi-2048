@@ -11,9 +11,7 @@
 #include <SDL2/SDL_mixer.h>
 
 /**
- * @brief The standard main function
- * 
- * Starts the game
+ * @brief The standard main function; starts the game.
  * 
  * @param argc Number of arguments
  * @param argv Arguments
@@ -25,7 +23,7 @@ int main(int argc, char **argv) {
 
 	// Initialize the game board, the stack and the vector containing list of background music available.
 	stack<State>s;
-	int board[SIZE][SIZE];
+	int board[Y_DIM][X_DIM];
 	vector<string> bg_music = {"apocalypse-CAS.mp3", "drift-kuyani.mp3", "truth-alexander.mp3"};
 
 	clear_board(board);

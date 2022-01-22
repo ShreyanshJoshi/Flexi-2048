@@ -8,18 +8,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void move_up(int board[SIZE][SIZE]) {		
+void move_up(int board[Y_DIM][X_DIM]) {		
 	int i,j,k,m;
-	for(j=0;j<4;j++) {									
+	for(j=0;j<X_DIM;j++) {									
 		i = 0;
-		while(i<3) {									
+		while(i<Y_DIM-1) {									
 			if(board[i][j]==0) {
 				i++;
 				continue;
 			}
 
 			k = i+1;
-			while(k<=2 && board[k][j]==0)
+			while(k<=Y_DIM-2 && board[k][j]==0)
 				k++;
 
 			if(board[k][j]==board[i][j]) {
@@ -30,7 +30,7 @@ void move_up(int board[SIZE][SIZE]) {
 			else
 				i = k;
 		}
-		for(m=1;m<4;m++) {								// Filling up empty spaces
+		for(m=1;m<Y_DIM;m++) {								// Filling up empty spaces
 			if(board[m][j]==0)
 				continue;
 
@@ -45,17 +45,18 @@ void move_up(int board[SIZE][SIZE]) {
 		}
 	}
 }
-void move_left(int board[SIZE][SIZE]) {
+
+void move_left(int board[Y_DIM][X_DIM]) {
 	int i,j,k,m;
-	for(i=0;i<4;i++) {									
+	for(i=0;i<Y_DIM;i++) {									
 		j = 0;
-		while(j<3) {
+		while(j<X_DIM-1) {
 			if(board[i][j]==0) {
 				j++;
 				continue;
 			}
 			k = j+1;
-			while(k<=2 && board[i][k]==0)
+			while(k<=X_DIM-2 && board[i][k]==0)
 				k++;
 
 			if(board[i][k]==board[i][j]) {
@@ -67,7 +68,7 @@ void move_left(int board[SIZE][SIZE]) {
 				j = k;
 		}
 
-		for(m=1;m<4;m++) {								// Filling up empty spaces
+		for(m=1;m<X_DIM;m++) {								// Filling up empty spaces
 			if(board[i][m]==0)
 				continue;
 
@@ -82,10 +83,11 @@ void move_left(int board[SIZE][SIZE]) {
 		}
 	}
 }
-void move_down(int board[SIZE][SIZE]) {
+
+void move_down(int board[Y_DIM][X_DIM]) {
 	int i,j,k,m;
-	for(j=0;j<4;j++) {									
-		i = 3;
+	for(j=0;j<X_DIM;j++) {									
+		i = Y_DIM-1;
 		while(i>=1) {									
 			if(board[i][j]==0) {
 				i--;
@@ -103,12 +105,12 @@ void move_down(int board[SIZE][SIZE]) {
 			else
 				i = k;
 		}
-		for(m=2;m>=0;m--) {								// Filling up empty spaces
+		for(m=Y_DIM-2;m>=0;m--) {								// Filling up empty spaces
 			if(board[m][j]==0)
 				continue;
 
 			k = m+1;
-			while(k<4 && board[k][j]==0) 
+			while(k<Y_DIM && board[k][j]==0) 
 				k++;
 			
 			if(k!=m+1) {
@@ -118,10 +120,11 @@ void move_down(int board[SIZE][SIZE]) {
 		}
 	}
 }
-void move_right(int board[SIZE][SIZE]) {
+
+void move_right(int board[Y_DIM][X_DIM]) {
 	int i,j,k,m;
-	for(i=0;i<4;i++) {									
-		j = 3;
+	for(i=0;i<Y_DIM;i++) {									
+		j = X_DIM-1;
 		while(j>=1) {								
 			if(board[i][j]==0) {
 				j--;
@@ -139,12 +142,12 @@ void move_right(int board[SIZE][SIZE]) {
 			else
 				j = k;
 		}
-		for(m=2;m>=0;m--) {								// Filling up empty spaces
+		for(m=X_DIM-2;m>=0;m--) {								// Filling up empty spaces
 			if(board[i][m]==0)
 				continue;
 
 			k = m+1;
-			while(k<4 && board[i][k]==0)
+			while(k<X_DIM && board[i][k]==0)
 				k++;
 
 			if(k!=m+1) {
