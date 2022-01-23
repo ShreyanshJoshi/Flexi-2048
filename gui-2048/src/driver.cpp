@@ -4,6 +4,7 @@
  * @brief File containing main function, that begins the game and hands over the control to the functions that keep the game running.
  *
  */
+#define SDL_MAIN_HANDLED
 #include "gui.h"
 #include "base.h"
 #include <time.h>

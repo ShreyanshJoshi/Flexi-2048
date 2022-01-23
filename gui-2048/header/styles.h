@@ -25,12 +25,12 @@
 /** @def SCREEN_WIDTH
  * The width of the window
  */
-#define SCREEN_WIDTH 600
+#define SCREEN_WIDTH 700
 
 /** @def SCREEN_HEIGHT
  * The height of the window
  */
-#define SCREEN_HEIGHT 900
+#define SCREEN_HEIGHT 800
 
 /** @def SCREEN_PAD
  * The padding to use while drawing elements to window

@@ -15,7 +15,7 @@
 /** @def Y_DIM
  * The number of tiles in vertical direction of the board
  */
-#define Y_DIM 12
+#define Y_DIM 9
 
 using namespace std;
 

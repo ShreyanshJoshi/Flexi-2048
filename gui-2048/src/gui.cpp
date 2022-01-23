@@ -413,8 +413,14 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 				if (undo==1) {										// undo executed
 					State x = s.top();
 					s.pop();
-					int points = s.top().points;
-					render_game(renderer, board, font_text, points, best_score);
+					int cur_points;
+
+					if (s.size()==0)
+						cur_points = 0;
+					else
+						cur_points = s.top().points;
+
+					render_game(renderer, board, font_text, cur_points, best_score);
 					continue;
 				}
 				
@@ -427,7 +433,14 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 				// to progress the game
 				if (s.size()>=1 && compare(board, s.top().v)) {	 				
 					s.pop();
-					render_game(renderer, board, font_text, s.top().points, best_score);		
+					int cur_points;
+
+					if (s.size()==0)
+						cur_points = 0;
+					else
+						cur_points = s.top().points;
+					
+					render_game(renderer, board, font_text, cur_points, best_score);		
 					continue;
 				}
 				
