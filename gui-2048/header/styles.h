@@ -25,12 +25,12 @@
 /** @def SCREEN_WIDTH
  * The width of the window
  */
-#define SCREEN_WIDTH 700
+#define SCREEN_WIDTH 450
 
 /** @def SCREEN_HEIGHT
  * The height of the window
  */
-#define SCREEN_HEIGHT 800
+#define SCREEN_HEIGHT 550
 
 /** @def SCREEN_PAD
  * The padding to use while drawing elements to window
@@ -47,7 +47,7 @@
 /** @def TITLE_FONT_SIZE
  * The font size used while displaying "2048" at the start of game.
  */
-#define TITLE_FONT_SIZE 180
+#define TITLE_FONT_SIZE 150
 
 /** @def GOVER_FONT_SIZE
  * The font size used while displaying "Game Over" at the end of game.

@@ -10,12 +10,12 @@
 /** @def X_DIM
  * The number of tiles in horizontal direction of the board
  */
-#define X_DIM 9
+#define X_DIM 4
 
 /** @def Y_DIM
  * The number of tiles in vertical direction of the board
  */
-#define Y_DIM 9
+#define Y_DIM 4
 
 using namespace std;
 

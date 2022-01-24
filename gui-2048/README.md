@@ -8,10 +8,11 @@ Welcome to my GUI implementation of the Flexi-2048 game !
 </p>
 
 ## Key features - 
-* Apart from the regular moves, this implementation also allows the user to undo their last move.
+* Apart from the 4 regular moves, this implementation also allows the user to undo their last move.
 * Since the game is command line based, arrow keys should be used for left, down, right, up moves and the letter 'u', should be used for undo moves. In case some other key is pressed, nothing will happen.
+* Once the game is over, the user is shown the the score (points), the total moves made and the total duration of the game.
 * *This is an any-dimension (**"Flexi"**) 2048 implementation i.e the game can have any number of tiles in either direction of the board (as against only 4x4 in the regular game).*
-* The size of the screen window is flexible. With the change in dimensions of screen window, as well as number of tiles on the board, the size of each tile as well as that of the rectangles at the bottom of the screen change, to ensure a great user experience.
+* The size of the screen window is also flexible. With the change in dimensions of screen window, as well as number of tiles on the board i.e the dimensions of the board, the size of each tile as well as that of the rectangles at the bottom of the screen change accordingly, to ensure a great user experience.
 * Finally, the game also has a background music, for which I have chosen some songs. These songs randomly change each time the "New Game" button is pressed or a new run is started from the command line.
 
 ## Requirements

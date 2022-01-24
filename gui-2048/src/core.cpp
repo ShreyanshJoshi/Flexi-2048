@@ -170,10 +170,13 @@ bool is_game_over(int board[Y_DIM][X_DIM]) {
 
 		if (board[i][X_DIM-1]==board[i+1][X_DIM-1] || board[i][X_DIM-1]==0)
 			return false;
-		
-		if (board[Y_DIM-1][i]==board[Y_DIM-1][i+1] || board[Y_DIM-1][i]==0)
-			return false;
 	}
+
+	// checking the last row of the board
+	for(int j=0; j<X_DIM-1; j++) 
+		if (board[Y_DIM-1][j]==board[Y_DIM-1][j+1] || board[Y_DIM-1][j]==0)
+			return false;
+	
 	return true;
 }
 

@@ -13,6 +13,9 @@
 #include <bits/stdc++.h>
 #include <SDL2/SDL_mixer.h>
 
+using namespace std;
+using namespace std::chrono;
+
 /** The pointer to the background music.*/
 Mix_Music *g_background_music;
 
@@ -84,7 +87,9 @@ void clear_screen(SDL_Renderer *renderer) {
 }
 
 
-void display_text(SDL_Renderer *renderer, const char *text, int size, stack<State>s, bool over) {
+void display_text(SDL_Renderer *renderer, const char *text, int size, stack<State>s, time_point<system_clock>start, time_point<system_clock> stop, 
+				  bool over, int moves) {
+
 	TTF_Font *font = NULL;
 	font = TTF_OpenFont(FONT_PATH, size);
 	
@@ -95,11 +100,11 @@ void display_text(SDL_Renderer *renderer, const char *text, int size, stack<Stat
 
 	SDL_Color black = {g_fg.r, g_fg.g, g_fg.b};
 	clear_screen(renderer);
-	SDL_Rect rect = {SCREEN_WIDTH / 5 + 3 * SCREEN_PAD, SCREEN_HEIGHT / 5, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+	SDL_Rect rect = {SCREEN_WIDTH / 5 + 5 * SCREEN_PAD / 2, SCREEN_HEIGHT / 5, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
 	draw_text(renderer, font, text, rect, black);
 
 	if (over) {
-		rect = {SCREEN_WIDTH / 5 + 1 / 3 * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 6, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		rect = {SCREEN_WIDTH / 5 + 1 / 5 * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 6, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
 		draw_text(renderer, font, "Score: ", rect, black);
 
 		rect = {SCREEN_WIDTH / 5 + (12 * size / 40) * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 6, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
@@ -111,6 +116,25 @@ void display_text(SDL_Renderer *renderer, const char *text, int size, stack<Stat
 			cur_points = s.top().points;
 
 		draw_text(renderer, font, to_string(cur_points).c_str(), rect, black);
+
+		rect = {SCREEN_WIDTH / 5 + 1 / 5 * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 3, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		draw_text(renderer, font, "Moves: ", rect, black);
+
+		rect = {SCREEN_WIDTH / 5 + (12 * size / 40) * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 3, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		draw_text(renderer, font, to_string(moves).c_str(), rect, black);
+
+		auto duration = duration_cast<milliseconds>(stop - start);
+		double t_seconds = double(duration.count()) / 1000;
+		
+		int minutes = int(t_seconds / 60);
+		double seconds = t_seconds - minutes * 60;
+		string time1 = to_string(minutes) + ":" + to_string(seconds).substr(0,4);
+
+		rect = {SCREEN_WIDTH / 5 + 1 / 5 * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		draw_text(renderer, font, "Time: ", rect, black);
+
+		rect = {SCREEN_WIDTH / 5 + (12 * size / 40) * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		draw_text(renderer, font, time1.c_str(), rect, black);
 	}
 
 	SDL_RenderPresent(renderer);
@@ -182,7 +206,7 @@ void draw_board(SDL_Renderer *renderer, const int board[Y_DIM][X_DIM]) {
 }
 
 
-void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, stack<State>&s, int &undo, bool &invalid) {
+void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, stack<State>&s, int &moves, int &undo, bool &invalid) {
 	vector<vector<int>>v;
 	load_vector(v,board);
 
@@ -199,6 +223,7 @@ void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, s
 				st.points = s.top().points + calculate_score(board, 'w');
 
 			move_up(board);
+			moves++;
 			break;
 
 		case SDLK_DOWN:
@@ -210,6 +235,7 @@ void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, s
 				st.points = s.top().points + calculate_score(board, 's');
 
 			move_down(board);
+			moves++;
 			break;
 
 		case SDLK_LEFT:
@@ -221,6 +247,7 @@ void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, s
 				st.points = s.top().points + calculate_score(board, 'a');
 
 			move_left(board);
+			moves++;
 			break;
 
 		case SDLK_RIGHT:
@@ -232,11 +259,13 @@ void handle_move(SDL_Event e, int board[Y_DIM][X_DIM], SDL_Renderer *renderer, s
 				st.points = s.top().points + calculate_score(board, 'd');
 
 			move_right(board);
+			moves++;
 			break;
 
 		case SDLK_u:
 			if (s.size()>=1) {
 				undo = 1;
+				moves++;
 				for (int i=0; i<Y_DIM; i++) 
 					for (int j=0; j<X_DIM; j++) 
 						board[i][j] = s.top().v[i][j];
@@ -270,7 +299,9 @@ void draw_button(SDL_Renderer *renderer, TTF_Font *font, bool game_over) {
 }
 
 
-void button_handler(SDL_Event e, int board[Y_DIM][X_DIM], stack<State>&s, vector<string>bg_music, bool game_over, bool &new_game) {
+void button_handler(SDL_Event e, int board[Y_DIM][X_DIM], stack<State>&s, vector<string>bg_music, bool game_over, bool &new_game, int &moves,
+ 					time_point<system_clock>&start) {
+
 	SDL_Rect draw_rect = {2 * SCREEN_PAD,
 						 SCREEN_HEIGHT - SCREEN_PAD - 80 * SCREEN_HEIGHT / 600,
 						 (SCREEN_WIDTH - 8 * SCREEN_PAD) / 3,
@@ -284,8 +315,10 @@ void button_handler(SDL_Event e, int board[Y_DIM][X_DIM], stack<State>&s, vector
 		
 		clear_board(board);
 		initialize_game(board, s);
+		moves = 0;
 		new_game = true;
-		
+		start = high_resolution_clock::now();
+
 		int randNum = rand()%(bg_music.size());
 		g_background_music = Mix_LoadMUS(bg_music[randNum].c_str());
 		Mix_PlayMusic(g_background_music, -1);
@@ -340,19 +373,24 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 
 	Mix_PlayMusic(g_background_music, -1);
 
-	display_text(renderer, "2048", min(TITLE_FONT_SIZE * SCREEN_HEIGHT / 600, TITLE_FONT_SIZE * SCREEN_WIDTH / 700), s);
+	time_point<system_clock>start, end;
+
+	display_text(renderer, "Flexi-2048", min(TITLE_FONT_SIZE * SCREEN_HEIGHT / 900, TITLE_FONT_SIZE * SCREEN_WIDTH / 1200), s, start, end);
 	usleep(1500000);
 
 	TTF_Font *font_text = NULL;
-	font_text = TTF_OpenFont(FONT_PATH, min(25 * SCREEN_HEIGHT / 600, 25 * SCREEN_WIDTH / 500));
+	font_text = TTF_OpenFont(FONT_PATH, min(25 * SCREEN_HEIGHT / 400, 25 * SCREEN_WIDTH / 650));
 	
 	if (font_text == NULL) {
 		fprintf(stderr, "The required font was not found. TTF_OpenFont: %s\n", TTF_GetError());
 		exit(EXIT_FAILURE);
 	}
 
-	int best_score = 0;
+	int best_score = 0, moves = 0;
 	render_game(renderer, board, font_text, 0, best_score);
+	
+    start = high_resolution_clock::now();
+
 	bool quit = false, game_over=false;
 	SDL_Event e;
 
@@ -361,7 +399,7 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 			if (game_over) {
 				if (e.type == SDL_MOUSEBUTTONUP) {
 					bool new_game = false;
-					button_handler(e, board, s, bg_music, game_over, new_game);
+					button_handler(e, board, s, bg_music, game_over, new_game, moves, start);
 					if (new_game) {
 						render_game(renderer, board, font_text, 0, best_score);
 						game_over = false;
@@ -384,7 +422,7 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 				int undo = 0;
 				bool invalid = false;
 				
-				handle_move(e, board, renderer, s, undo, invalid);
+				handle_move(e, board, renderer, s, moves, undo, invalid);
 
 				if (s.size()==0)
 					best_score = max(best_score, 0);
@@ -403,8 +441,13 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 						cur_points = s.top().points;
 
 					render_game(renderer, board, font_text, cur_points, best_score);
+					
+					// Get ending timepoint
+    				time_point<system_clock>stop = high_resolution_clock::now();
+
 					usleep(1500000);
-					display_text(renderer, "You win :)", min(GOVER_FONT_SIZE * SCREEN_HEIGHT / 600, GOVER_FONT_SIZE * SCREEN_WIDTH / 700), s, true);
+					display_text(renderer, "You win :)", min(GOVER_FONT_SIZE * SCREEN_HEIGHT / 800, GOVER_FONT_SIZE * SCREEN_WIDTH / 850), s, 
+								 start, stop, true, moves);
 					draw_button(renderer, TTF_OpenFont(FONT_PATH, min(35 * SCREEN_HEIGHT / 600, 35 * SCREEN_WIDTH / 500)), game_over);
 					SDL_RenderPresent(renderer);
 					continue;
@@ -433,6 +476,7 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 				// to progress the game
 				if (s.size()>=1 && compare(board, s.top().v)) {	 				
 					s.pop();
+					moves--;
 					int cur_points;
 
 					if (s.size()==0)
@@ -463,8 +507,13 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 				// with the assignment of an empty tile a new value, need to check if it's game over or not.
 				if (is_game_over(board)) {
 					game_over = true;
+
+					// Get ending timepoint
+    				time_point<system_clock>stop = high_resolution_clock::now();
+
 					usleep(1500000);
-					display_text(renderer, "Game Over", min(GOVER_FONT_SIZE * SCREEN_HEIGHT / 600, GOVER_FONT_SIZE * SCREEN_WIDTH / 700), s, true);
+					display_text(renderer, "Game Over!", min(GOVER_FONT_SIZE * SCREEN_HEIGHT / 800, GOVER_FONT_SIZE * SCREEN_WIDTH / 850), s, 
+								 start, stop, true, moves);
 					draw_button(renderer, TTF_OpenFont(FONT_PATH, min(35 * SCREEN_HEIGHT / 600, 35 * SCREEN_WIDTH / 500)), game_over);
 					SDL_RenderPresent(renderer);
 					continue;
@@ -473,7 +522,7 @@ void game_loop(int board[Y_DIM][X_DIM], stack<State>&s, SDL_Renderer *renderer, 
 
 			else if (e.type == SDL_MOUSEBUTTONUP) {
 				bool new_game = false;
-				button_handler(e, board, s, bg_music, game_over, new_game);
+				button_handler(e, board, s, bg_music, game_over, new_game, moves, start);
 
 				if (new_game)
 					render_game(renderer, board, font_text, 0, best_score);
