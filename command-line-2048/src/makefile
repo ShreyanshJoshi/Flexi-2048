@@ -1,6 +1,6 @@
 # Makefile is an alternate to the code - g++  driver.cpp  helper.cpp  core.cpp  moves.cpp
 # A key feature of makefile is that it ensures only those files that have changes are compiled again.
-# gcc -c means compile but don't link. Used to create object files.
+# g++ -c means compile but don't link. Used to create object files. Those object files are linked later (see line 5).
 
 run: driver.o helper.o core.o moves.o  
 	g++ driver.o helper.o core.o moves.o -o run
