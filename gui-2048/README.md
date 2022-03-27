@@ -4,7 +4,7 @@ Welcome to my GUI implementation of the Flexi-2048 game !
 <h3 align="center">A yet another implementation of the 2048 in C++!</h3>
 </p>
 <p align="center">
-<img align="center" src="https://raw.githubusercontent.com/ShreyanshJoshi/2048/main/gui-2048/screenshots/img3.png">
+<img align="center" src="https://raw.githubusercontent.com/ShreyanshJoshi/2048/main/gui-2048/screenshots/4x8 board.png">
 </p>
 
 ## Key features - 
@@ -12,7 +12,7 @@ Welcome to my GUI implementation of the Flexi-2048 game !
 * Since the game is command line based, arrow keys should be used for left, down, right, up moves and the letter 'u', should be used for undo moves. In case some other key is pressed, nothing will happen.
 * Once the game is over, the user is shown the the score (points), the total moves made and the total duration of the game.
 * *This is an any-dimension (**"Flexi"**) 2048 implementation i.e the game can have any number of tiles in either direction of the board (as against only 4x4 in the regular game).*
-* The size of the screen window is also flexible. With the change in dimensions of screen window, as well as number of tiles on the board i.e the dimensions of the board, the size of each tile as well as that of the rectangles at the bottom of the screen change accordingly, to ensure a great user experience.
+* The size of the screen window is also flexible. With the change in dimensions of screen window, as well as number of tiles on the board i.e the dimensions of the board, the size of each tile along with that of the rectangles at the bottom of the screen as well as the spacing between tiles change accordingly, to ensure a great user experience.
 * Finally, the game also has a background music, for which I have chosen some songs. These songs randomly change each time the "New Game" button is pressed or a new run is started from the command line.
 
 ## Requirements
@@ -31,7 +31,7 @@ Under Windows, you can download the libraries <a href="https://www.libsdl.org/do
 
 ## Compilation and Execution
 #### Linux / Mac / Windows
-Clone this github repository, and make a folder named 'build' inside the project root folder. Then, the game can be built inside this folder using the following commands - 
+Clone this github repository, and make a folder named 'build' inside the project root folder ('gui-2048'). Then, the game can be built inside this folder using the following commands - 
 
 `cd build`
 
@@ -47,7 +47,7 @@ This will create a new folder named 'bin' inside the build folder. The compiled 
 
 NOTE: Once created, there would be the required font files and the audio resources inside the `bin` directory. They are critical are used by the game to render the text and play audio. The game won't run without these.
 
-#### Windows
+#### Another option for Windows
 In case you are having issues running the game using `cmake` and `make` on Windows, here is another way to go ahead: Clone the repository as usual and run `cd gui-2048`.
 
 Inside the 'gui-2048' folder, you need to have the latest versions of DLL files for the executable to run. When I tested it on Windows, mentioned below are the DLL files I had to manually download. Again, remember to maintain uniformity of versions while downloading all these (either everything should be 32-bit or everything should be 64-bit), otherwise the executable might not run.

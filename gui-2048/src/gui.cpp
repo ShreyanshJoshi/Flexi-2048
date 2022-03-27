@@ -128,12 +128,12 @@ void display_text(SDL_Renderer *renderer, const char *text, int size, stack<Stat
 		
 		int minutes = int(t_seconds / 60);
 		double seconds = t_seconds - minutes * 60;
-		string time1 = to_string(minutes) + ":" + to_string(seconds).substr(0,4);
+		string time1 = to_string(minutes) + " min, " + to_string(seconds).substr(0,4) + " sec";
 
-		rect = {SCREEN_WIDTH / 5 + 1 / 5 * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		rect = {SCREEN_WIDTH / 10, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
 		draw_text(renderer, font, "Time: ", rect, black);
 
-		rect = {SCREEN_WIDTH / 5 + (12 * size / 40) * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
+		rect = {SCREEN_WIDTH / 4 + (12 * size / 40) * SCREEN_PAD, SCREEN_HEIGHT / 5 + SCREEN_PAD * size / 2, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 5};
 		draw_text(renderer, font, time1.c_str(), rect, black);
 	}
 

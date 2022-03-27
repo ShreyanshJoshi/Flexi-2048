@@ -167,16 +167,22 @@ bool is_game_over(int board[Y_DIM][X_DIM]) {
 		for (int j=0; j<X_DIM-1; j++) 
 			if (board[i][j]==board[i][j+1] || board[i][j]==board[i+1][j] || board[i][j]==0)
 				return false;
-
-		if (board[i][X_DIM-1]==board[i+1][X_DIM-1] || board[i][X_DIM-1]==0)
-			return false;
 	}
 
 	// checking the last row of the board
-	for(int j=0; j<X_DIM-1; j++) 
+	for (int j=0; j<X_DIM-1; j++) 
 		if (board[Y_DIM-1][j]==board[Y_DIM-1][j+1] || board[Y_DIM-1][j]==0)
 			return false;
 	
+	// checking the last column of the board
+	for (int i=0; i<Y_DIM-1; i++)
+		if (board[i][X_DIM-1]==board[i+1][X_DIM-1] || board[i][X_DIM-1]==0)
+			return false;
+
+	// checking the last corner element of the board that gets missed by above checks
+	if (board[Y_DIM-1][X_DIM-1]==0)
+		return false;
+
 	return true;
 }
 
